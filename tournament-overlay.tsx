@@ -8,15 +8,14 @@ interface Runner {
   name: string
   youtubeId: string
   hits: number
-  position: "top-left" | "top-right" | "bottom-left" | "bottom-right"
+  position: "top-left" | "top-right" | "bottom-center"
 }
 
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
-    { id: 1, name: "Bimjet", youtubeId: "FPu38WHtDlU", hits: 0, position: "top-left" },
-    { id: 2, name: "PirmanGees", youtubeId: "8FfsCCxcFN4", hits: 0, position: "top-right" },
-    { id: 3, name: "Nyirrr", youtubeId: "jFQ20lolle8", hits: 0, position: "bottom-left" },
-    { id: 4, name: "Seppppppppp", youtubeId: "aGivlroBijk", hits: 0, position: "bottom-right" },
+    { id: 1, name: "FirmanGS", youtubeId: "4eRsHYpW4Rs", hits: 0, position: "top-left" },
+    { id: 2, name: "NYR09", youtubeId: "8FfsCCxcFN4", hits: 0, position: "top-right" },
+    { id: 3, name: "Sepp", youtubeId: "jFQ20lolle8", hits: 0, position: "bottom-center" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
@@ -26,7 +25,6 @@ export default function TournamentOverlay() {
     1: 0,
     2: 0,
     3: 0,
-    4: 0,
   })
 
   // Timer logic
@@ -128,9 +126,12 @@ export default function TournamentOverlay() {
       muteRunner(runner.id)
     })
   }
-
   const getRunnerBorderColor = (position: string) => {
-    return position.includes("left") ? "border-red-500" : "border-white"
+    return position.includes("left")
+      ? "border-red-500"
+      : position.includes("right")
+        ? "border-white"
+        : "border-blue-500"
   }
 
   // Get positioning and sizing for each runner based on focus state
@@ -139,12 +140,11 @@ export default function TournamentOverlay() {
     const isOtherFocused = focusedRunner !== null && focusedRunner !== runner.id
 
     if (!focusedRunner) {
-      // Normal 2x2 grid positioning
+      // Normal 3-video layout positioning
       const gridPositions = {
         "top-left": "top-4 left-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
         "top-right": "top-4 right-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
-        "bottom-left": "bottom-4 left-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
-        "bottom-right": "bottom-4 right-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
+        "bottom-center": "bottom-4 left-1/2 transform -translate-x-1/2 w-[calc(50%-24px)] h-[calc(50%-24px)]",
       }
       return { className: gridPositions[runner.position], style: {} }
     }
@@ -157,12 +157,12 @@ export default function TournamentOverlay() {
     // Thumbnail positioning on the right side - using inline styles for better compatibility
     const otherRunners = runners.filter((r) => r.id !== focusedRunner)
     const runnerIndex = otherRunners.findIndex((r) => r.id === runner.id)
-    const thumbnailHeight = 240 // Fixed height for thumbnails
+    const thumbnailHeight = 360 // Fixed height for thumbnails
     const spacing = 16 // Space between thumbnails
-    const topOffset = 16 + runnerIndex * (thumbnailHeight + spacing) // Start from top with proper spacing
+    const topOffset = 160 + runnerIndex * (thumbnailHeight + spacing) // Start from top with proper spacing
 
     return {
-      className: "right-4 w-80",
+      className: "right-4 w-[calc(25%-24px)] h-[calc(60%-24px)]",
       style: {
         top: `${topOffset}px`,
         height: `${thumbnailHeight}px`,
@@ -210,12 +210,12 @@ export default function TournamentOverlay() {
           <div className="flex space-x-8 text-white text-center">
             <div>
               <p className="font-semibold text-lg">Commentator 1</p>
-              <p className="text-sm text-gray-300">AnomaliHitless</p>
+              <p className="text-sm text-gray-300">AgungSp</p>
             </div>
             <div className="w-px bg-gray-500"></div>
             <div>
               <p className="font-semibold text-lg">Commentator 2</p>
-              <p className="text-sm text-gray-300">SepuhHitless</p>
+              <p className="text-sm text-gray-300">FedoRas</p>
             </div>
           </div>
         </div>
