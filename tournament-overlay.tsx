@@ -13,10 +13,10 @@ interface Runner {
 
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
-    { id: 1, name: "Bimjet", youtubeId: "FPu38WHtDlU", hits: 0, position: "top-left" },
-    { id: 2, name: "PirmanGees", youtubeId: "8FfsCCxcFN4", hits: 0, position: "top-right" },
-    { id: 3, name: "Nyirrr", youtubeId: "jFQ20lolle8", hits: 0, position: "bottom-left" },
-    { id: 4, name: "Seppppppppp", youtubeId: "aGivlroBijk", hits: 0, position: "bottom-right" },
+    { id: 1, name: "FedoRas", youtubeId: "ZXNz3fMDHbk", hits: 0, position: "top-left" },
+    { id: 2, name: "Firman Gs", youtubeId: "q1WVgSn-nDU", hits: 0, position: "top-right" },
+    { id: 3, name: "Nyr09", youtubeId: "R9dnD8k87BI", hits: 0, position: "bottom-left" },
+    { id: 4, name: "Seppp", youtubeId: "5jihcQ1pDHA", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
@@ -28,7 +28,8 @@ export default function TournamentOverlay() {
     3: 0,
     4: 0,
   })
-
+  const [editingUrls, setEditingUrls] = useState(false)
+  const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
   // Timer logic
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -116,6 +117,50 @@ export default function TournamentOverlay() {
     }
   }
 
+  const extractYouTubeId = (url: string): string => {
+    // Handle various YouTube URL formats
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+      /^([a-zA-Z0-9_-]{11})$/, // Direct video ID
+    ]
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern)
+      if (match) return match[1]
+    }
+
+    return url // Return as-is if no pattern matches
+  }
+
+  const updateRunnerUrl = (runnerId: number, url: string) => {
+    const youtubeId = extractYouTubeId(url)
+    setRunners((prev) => prev.map((runner) => (runner.id === runnerId ? { ...runner, youtubeId } : runner)))
+    // Force refresh the iframe
+    setRefreshKeys((prev) => ({
+      ...prev,
+      [runnerId]: prev[runnerId] + 1,
+    }))
+  }
+
+  const handleUrlChange = (runnerId: number, url: string) => {
+    setTempUrls((prev) => ({ ...prev, [runnerId]: url }))
+  }
+
+  const applyUrlChanges = () => {
+    Object.entries(tempUrls).forEach(([runnerId, url]) => {
+      if (url.trim()) {
+        updateRunnerUrl(Number.parseInt(runnerId), url.trim())
+      }
+    })
+    setTempUrls({})
+    setEditingUrls(false)
+  }
+
+  const cancelUrlChanges = () => {
+    setTempUrls({})
+    setEditingUrls(false)
+  }
+
   const unmuteRunner = (runnerId: number) => {
     const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
     if (iframe) {
@@ -151,18 +196,18 @@ export default function TournamentOverlay() {
 
     if (isFocused) {
       // Main focused video - large on the left
-      return { className: "top-4 left-4 w-[calc(75%-24px)] h-[calc(100%-32px)]", style: {} }
+      return { className: "top-4 left-4 w-[calc(65%-24px)] h-[calc(100%-32px)]", style: {} }
     }
 
     // Thumbnail positioning on the right side - using inline styles for better compatibility
     const otherRunners = runners.filter((r) => r.id !== focusedRunner)
     const runnerIndex = otherRunners.findIndex((r) => r.id === runner.id)
-    const thumbnailHeight = 240 // Fixed height for thumbnails
+    const thumbnailHeight = 320 // Fixed height for thumbnails
     const spacing = 16 // Space between thumbnails
     const topOffset = 16 + runnerIndex * (thumbnailHeight + spacing) // Start from top with proper spacing
 
     return {
-      className: "right-4 w-80",
+      className: "right-4 w-[calc(35%-24px)]",
       style: {
         top: `${topOffset}px`,
         height: `${thumbnailHeight}px`,
@@ -210,12 +255,12 @@ export default function TournamentOverlay() {
           <div className="flex space-x-8 text-white text-center">
             <div>
               <p className="font-semibold text-lg">Commentator 1</p>
-              <p className="text-sm text-gray-300">AnomaliHitless</p>
+              <p className="text-sm text-gray-300">AgungSP</p>
             </div>
             <div className="w-px bg-gray-500"></div>
             <div>
               <p className="font-semibold text-lg">Commentator 2</p>
-              <p className="text-sm text-gray-300">SepuhHitless</p>
+              <p className="text-sm text-gray-300">Underated</p>
             </div>
           </div>
         </div>
@@ -287,12 +332,7 @@ export default function TournamentOverlay() {
                 </div>
 
 
-                {/* Muted Indicator for non-focused videos */}
-                {isOtherFocused && (
-                  <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold shadow-lg">
-                    🔇 MUTED
-                  </div>
-                )}
+                
               </div>
             </div>
           )
@@ -303,7 +343,7 @@ export default function TournamentOverlay() {
       <div className="w-full max-w-6xl bg-gray-800 rounded-lg p-6 border-2 border-gray-600">
         <h2 className="text-white text-xl font-bold mb-4 text-center">Tournament Control Panel</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
           {/* Timer Controls */}
           <div className="bg-gray-700 rounded-lg p-4">
             <h3 className="text-white font-semibold mb-3">Timer Controls</h3>
@@ -432,6 +472,65 @@ export default function TournamentOverlay() {
                 </div>
               ))}
             </div>
+          </div>
+          
+          {/* YouTube URL Controls */}
+          <div className="bg-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-white font-semibold">YouTube URLs</h3>
+              <button
+                onClick={() => setEditingUrls(!editingUrls)}
+                className={`px-3 py-1 rounded text-xs font-semibold ${
+                  editingUrls ? "bg-red-600 hover:bg-red-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
+                }`}
+              >
+                {editingUrls ? "Cancel" : "Edit URLs"}
+              </button>
+            </div>
+
+            {!editingUrls ? (
+              <div className="space-y-2">
+                {runners.map((runner) => (
+                  <div key={runner.id} className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-white text-sm font-medium">{runner.name}</span>
+                    </div>
+                    <div className="text-xs text-gray-400 truncate" title={runner.youtubeId}>
+                      ID: {runner.youtubeId}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {runners.map((runner) => (
+                  <div key={runner.id} className="space-y-2">
+                    <label className="text-white text-sm font-medium block">{runner.name}</label>
+                    <input
+                      type="text"
+                      placeholder="YouTube URL or Video ID"
+                      defaultValue={runner.youtubeId}
+                      onChange={(e) => handleUrlChange(runner.id, e.target.value)}
+                      className="w-full px-2 py-1 bg-gray-600 text-white rounded text-xs border border-gray-500 focus:border-blue-400 focus:outline-none"
+                    />
+                  </div>
+                ))}
+                <div className="flex space-x-2 mt-3">
+                  <button
+                    onClick={applyUrlChanges}
+                    className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-semibold"
+                  >
+                    ✅ Apply Changes
+                  </button>
+                  <button
+                    onClick={cancelUrlChanges}
+                    className="flex-1 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-xs font-semibold"
+                  >
+                    ❌ Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
