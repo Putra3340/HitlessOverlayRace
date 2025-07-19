@@ -98,8 +98,73 @@ export default function TournamentOverlay() {
   const fastForwardRunner = (runnerId: number, seconds = 10) => {
     const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
     if (iframe) {
-      // Get current time and seek forward
+      // First, get the current time
+      iframe.contentWindow?.postMessage('{"event":"command","func":"getCurrentTime","args":""}', "*")
+
+      // Listen for the response and then seek to current time + seconds
+      const handleMessage = (event: MessageEvent) => {
+        if (event.origin !== "https://www.youtube.com") return
+
+        try {
+          const data = JSON.parse(event.data)
+          if (data.event === "infoDelivery" && data.info && typeof data.info.currentTime === "number") {
+            const currentTime = data.info.currentTime
+            const newTime = currentTime + seconds
+
+            // Seek to the new time
+            iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${newTime}, true]}`, "*")
+
+            // Remove the event listener
+            window.removeEventListener("message", handleMessage)
+          }
+        } catch (error) {
+          console.error("Error parsing YouTube message:", error)
+          window.removeEventListener("message", handleMessage)
+        }
+      }
+
+      // Add temporary event listener
+      window.addEventListener("message", handleMessage)
+
+      // Clean up listener after 2 seconds if no response
+      setTimeout(() => {
+        window.removeEventListener("message", handleMessage)
+      }, 2000)
+    }
+  }
+
+  const seekToTime = (runnerId: number, seconds: number) => {
+    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
+    if (iframe) {
       iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${seconds}, true]}`, "*")
+    }
+  }
+
+  const skipForward = (runnerId: number, skipSeconds = 10) => {
+    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
+    if (iframe) {
+      // Request current time and handle the response
+      const handleTimeResponse = (event: MessageEvent) => {
+        if (event.origin !== "https://www.youtube.com") return
+
+        try {
+          const data = JSON.parse(event.data)
+          if (data.event === "infoDelivery" && data.info && typeof data.info.currentTime === "number") {
+            const newTime = data.info.currentTime + skipSeconds
+            iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${newTime}, true]}`, "*")
+            window.removeEventListener("message", handleTimeResponse)
+          }
+        } catch (error) {
+          console.error("Error handling time response:", error)
+          window.removeEventListener("message", handleTimeResponse)
+        }
+      }
+
+      window.addEventListener("message", handleTimeResponse)
+      iframe.contentWindow?.postMessage('{"event":"command","func":"getCurrentTime","args":""}', "*")
+
+      // Cleanup after timeout
+      setTimeout(() => window.removeEventListener("message", handleTimeResponse), 2000)
     }
   }
 
@@ -235,7 +300,7 @@ export default function TournamentOverlay() {
         <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-30">
   <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
     <img
-      src="https://cdn.discordapp.com/attachments/1385198630725619814/1389920244897681418/Hitlesssmoll.png?ex=68665f99&is=68650e19&hm=8ac4f1e35bfc68318263fa63fdc0fd1a78fbf978bba93f3da05047d2dd2c3a57&"
+      src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Hitless_ID.png"
       alt=""
       className="w-25 h-25 object-contain rounded-full"
     />
@@ -246,7 +311,7 @@ export default function TournamentOverlay() {
         {/* Timer - Top Right */}
         <div className="absolute top-6 right-6 z-30">
           <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 border-4 border-yellow-500 shadow-2xl">
-            <div className="text-4xl font-mono font-bold text-white text-center tracking-wider">{formatTime(time)}</div>
+            <div className="text-4xl font-mono font-bold text-white text-center tracking-wider">ㅤㅤㅤㅤ</div>
           </div>
         </div>
 
@@ -446,7 +511,7 @@ export default function TournamentOverlay() {
                       🔄 Refresh
                     </button>
                     <button
-                      onClick={() => fastForwardRunner(runner.id, 10)}
+                     onClick={() => fastForwardRunner(runner.id, 10)}
                       className="px-2 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded text-xs"
                       title={`Fast forward ${runner.name} by 10s`}
                     >
