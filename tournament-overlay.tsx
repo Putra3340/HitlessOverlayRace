@@ -8,15 +8,27 @@ interface Runner {
   name: string
   youtubeId: string
   hits: number
-  position: "top-left" | "top-right" | "bottom-left" | "bottom-right"
+  position:
+    | "top-left"
+    | "top-center-left"
+    | "top-center-right"
+    | "top-right"
+    | "bottom-left"
+    | "bottom-center-left"
+    | "bottom-center-right"
+    | "bottom-right"
 }
 
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
-    { id: 1, name: "FedoRas", youtubeId: "ZXNz3fMDHbk", hits: 0, position: "top-left" },
-    { id: 2, name: "Firman Gs", youtubeId: "q1WVgSn-nDU", hits: 0, position: "top-right" },
-    { id: 3, name: "Nyr09", youtubeId: "R9dnD8k87BI", hits: 0, position: "bottom-left" },
-    { id: 4, name: "Seppp", youtubeId: "5jihcQ1pDHA", hits: 0, position: "bottom-right" },
+    { id: 1, name: "Seppp", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-left" },
+    { id: 2, name: "Bg Dap", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-left" },
+    { id: 3, name: "NYR09", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-right" },
+    { id: 4, name: "FirmanGs", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-right" },
+    { id: 5, name: "FedoRas", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-left" },
+    { id: 6, name: "Shaddy", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-left" },
+    { id: 7, name: "Underated", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-right" },
+    { id: 8, name: "Dyatt", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
@@ -27,6 +39,10 @@ export default function TournamentOverlay() {
     2: 0,
     3: 0,
     4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
   })
   const [editingUrls, setEditingUrls] = useState(false)
   const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
@@ -251,33 +267,53 @@ export default function TournamentOverlay() {
     if (!focusedRunner) {
       // Normal 2x2 grid positioning
       const gridPositions = {
-        "top-left": "top-4 left-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
-        "top-right": "top-4 right-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
-        "bottom-left": "bottom-4 left-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
-        "bottom-right": "bottom-4 right-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
+        "top-left": "top-4 left-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
+        "top-center-left": "top-4 left-[calc(25%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
+        "top-center-right": "top-4 left-[calc(50%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
+        "top-right": "top-4 right-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
+        "bottom-left": "bottom-4 left-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
+        "bottom-center-left": "bottom-4 left-[calc(25%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
+        "bottom-center-right": "bottom-4 left-[calc(50%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
+        "bottom-right": "bottom-4 right-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
       }
       return { className: gridPositions[runner.position], style: {} }
     }
 
     if (isFocused) {
-      // Main focused video - large on the left
-      return { className: "top-4 left-4 w-[calc(65%-24px)] h-[calc(100%-32px)]", style: {} }
+      // Main focused video - large on the left (75% width)
+      return { className: "top-4 left-4 w-[calc(70%-24px)] h-[calc(100%-32px)]", style: {} }
     }
 
-    // Thumbnail positioning on the right side - using inline styles for better compatibility
-    const otherRunners = runners.filter((r) => r.id !== focusedRunner)
-    const runnerIndex = otherRunners.findIndex((r) => r.id === runner.id)
-    const thumbnailHeight = 320 // Fixed height for thumbnails
-    const spacing = 16 // Space between thumbnails
-    const topOffset = 16 + runnerIndex * (thumbnailHeight + spacing) // Start from top with proper spacing
+        // Thumbnail positioning on the right side - 2x4 grid layout, skipping first position
+        const otherRunners = runners.filter((r) => r.id !== focusedRunner)
+        const runnerIndex = otherRunners.findIndex((r) => r.id === runner.id)
+        const thumbnailHeight = 240 // Height for thumbnails
+        const spacing = 16 // Space between thumbnails
+    
+       // Define the grid positions manually, skipping position [1,0] (top-right)
+    // Available positions: [0,0], [0,1], [1,1], [0,2], [1,2], [0,3], [1,3]
+    const gridPositions = [
+      { column: 0, row: 0 }, // First thumbnail: left column, top row
+      { column: 0, row: 1 }, // Second thumbnail: left column, second row
+      { column: 1, row: 1 }, // Third thumbnail: right column, second row (skipping [1,0])
+      { column: 0, row: 2 }, // Fourth thumbnail: left column, third row
+      { column: 1, row: 2 }, // Fifth thumbnail: right column, third row
+      { column: 0, row: 3 }, // Sixth thumbnail: left column, fourth row
+      { column: 1, row: 3 }, // Seventh thumbnail: right column, fourth row
+    ]
 
-    return {
-      className: "right-4 w-[calc(35%-24px)]",
-      style: {
-        top: `${topOffset}px`,
-        height: `${thumbnailHeight}px`,
-      },
-    }
+    const position = gridPositions[runnerIndex] || { column: 0, row: 0 }
+    
+    const leftOffset = position.column === 0 ? "right-[calc(15%+16px)]" : "right-4"
+    const topOffset = 16 + position.row * (thumbnailHeight + spacing)
+    
+        return {
+          className: `${leftOffset} w-[calc(15%-12px)]`,
+          style: {
+            top: `${topOffset}px`,
+            height: `${thumbnailHeight}px`,
+          },
+        }
   }
 
   return (
@@ -320,12 +356,12 @@ export default function TournamentOverlay() {
           <div className="flex space-x-8 text-white text-center">
             <div>
               <p className="font-semibold text-lg">Commentator 1</p>
-              <p className="text-sm text-gray-300">AgungSP</p>
+              <p className="text-sm text-gray-300">b</p>
             </div>
             <div className="w-px bg-gray-500"></div>
             <div>
               <p className="font-semibold text-lg">Commentator 2</p>
-              <p className="text-sm text-gray-300">Underated</p>
+              <p className="text-sm text-gray-300">Annie</p>
             </div>
           </div>
         </div>
@@ -405,7 +441,7 @@ export default function TournamentOverlay() {
       </div>
 
       {/* Control Panel - Separate from main overlay */}
-      <div className="w-full max-w-6xl bg-gray-800 rounded-lg p-6 border-2 border-gray-600">
+      <div className="w-full bg-gray-800 rounded-lg p-6 border-2 border-gray-600">
         <h2 className="text-white text-xl font-bold mb-4 text-center">Tournament Control Panel</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
