@@ -22,13 +22,13 @@ interface Runner {
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
     { id: 1, name: "Seppp", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-left" },
-    { id: 2, name: "AgungSp", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-left" },
-    { id: 3, name: "NYR 9", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-right" },
-    { id: 4, name: "FirmanGs", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-right" },
-    { id: 5, name: "FedoRas", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-left" },
-    { id: 6, name: "Shaddy", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-left" },
-    { id: 7, name: "Underated", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-right" },
-    { id: 8, name: "Dyatt", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-right" },
+    { id: 2, name: "NYR 9", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-left" },
+    { id: 3, name: "FirmanGs", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-right" },
+    { id: 4, name: "FedoRas", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-right" },
+    { id: 5, name: "Shaddy", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-left" },
+    { id: 6, name: "Underated", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-left" },
+    { id: 7, name: "Dyatt", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-right" },
+    { id: 8, name: "AgungSp", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
@@ -46,7 +46,7 @@ export default function TournamentOverlay() {
   })
   const [editingUrls, setEditingUrls] = useState(false)
   const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
-  const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim")
+  const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim  | SELAMAT HUT RI Ke-80!!! 🇮🇩🥳🥳🎈🎉  | Indonesian Hitless Community")
   // Timer logic
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -348,7 +348,7 @@ export default function TournamentOverlay() {
         {/* Timer - Top Right */}
         <div className="absolute top-6 right-6 z-30">
           <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 border-4 border-yellow-500 shadow-2xl">
-            <div className="text-4xl font-mono font-bold text-white text-center tracking-wider">ㅤㅤㅤㅤ</div>
+            <div className="text-4xl font-mono font-bold text-white text-center tracking-wider">ㅤㅤㅤㅤㅤㅤ</div>
           </div>
         </div>
 
