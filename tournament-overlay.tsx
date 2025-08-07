@@ -22,8 +22,8 @@ interface Runner {
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
     { id: 1, name: "Seppp", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-left" },
-    { id: 2, name: "Bg Dap", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-left" },
-    { id: 3, name: "NYR09", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-right" },
+    { id: 2, name: "AgungSp", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-left" },
+    { id: 3, name: "NYR 9", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-right" },
     { id: 4, name: "FirmanGs", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-right" },
     { id: 5, name: "FedoRas", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-left" },
     { id: 6, name: "Shaddy", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-left" },
@@ -46,6 +46,7 @@ export default function TournamentOverlay() {
   })
   const [editingUrls, setEditingUrls] = useState(false)
   const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
+  const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim")
   // Timer logic
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -317,7 +318,7 @@ export default function TournamentOverlay() {
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-4 bg-gray-900 min-h-screen">
+    <div className="flex flex-col items-center space-y-4 bg-gray-900 min-h-screen">
       {/* Main Overlay Panel - 1920x1080 */}
       <div className="w-[1920px] h-[1080px] relative overflow-hidden bg-gradient-to-r from-red-900 via-gray-800 to-gray-100 border-4 border-gray-600 rounded-lg">
         {/* RE4 Background Image */}
@@ -361,10 +362,19 @@ export default function TournamentOverlay() {
             <div className="w-px bg-gray-500"></div>
             <div>
               <p className="font-semibold text-lg">Commentator 2</p>
-              <p className="text-sm text-gray-300">Annie</p>
+              <p className="text-sm text-gray-300">Dani</p>
             </div>
           </div>
         </div>
+        {/* Sponsor Running Text Overlay */}
+        <div className="absolute bottom-0 left-0 w-full h-12 bg-black/70 backdrop-blur-sm z-20 overflow-hidden border-t-2 border-gray-500">
+          <div className="relative w-full h-full flex items-center">
+            <div className="absolute whitespace-nowrap text-white text-2xl font-bold animate-marquee">
+              {sponsorText}
+            </div>
+          </div>
+        </div>
+
 
         {/* Runner Videos - Persistent iframes with dynamic positioning */}
         {runners.map((runner) => {

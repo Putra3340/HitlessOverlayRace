@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Overlay Hitless by Putra3340',
-  description: 'Create hitless overlays for your game with ease.',
+  description: 'Properti milik IHC',
   generator: 'Putra3340',
 }
 
