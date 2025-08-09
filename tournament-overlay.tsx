@@ -22,13 +22,13 @@ interface Runner {
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
     { id: 1, name: "Seppp", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-left" },
-    { id: 2, name: "NYR 9", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-left" },
-    { id: 3, name: "FirmanGs", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-right" },
-    { id: 4, name: "FedoRas", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-right" },
-    { id: 5, name: "Shaddy", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-left" },
-    { id: 6, name: "Underated", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-left" },
-    { id: 7, name: "Dyatt", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-right" },
-    { id: 8, name: "AgungSp", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-right" },
+    { id: 2, name: "Bg Dap", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-left" },
+    { id: 3, name: "NYR 9", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-center-right" },
+    { id: 4, name: "FirmanGs", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-right" },
+    { id: 5, name: "FedoRas", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-left" },
+    { id: 6, name: "Shaddy", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-left" },
+    { id: 7, name: "Underated", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-right" },
+    { id: 8, name: "Dyatt", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
