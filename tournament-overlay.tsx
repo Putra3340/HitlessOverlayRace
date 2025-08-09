@@ -46,7 +46,7 @@ export default function TournamentOverlay() {
   })
   const [editingUrls, setEditingUrls] = useState(false)
   const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
-  const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim  | SELAMAT HUT RI Ke-80!!! 🇮🇩🥳🥳🎈🎉  | Indonesian Hitless Community")
+  const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim, @yanto49904  | SELAMAT HUT RI Ke-80!!! 🇮🇩🥳🥳🎈🎉  | Indonesian Hitless Community")
   // Timer logic
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -268,11 +268,11 @@ export default function TournamentOverlay() {
     if (!focusedRunner) {
       // Normal 2x2 grid positioning
       const gridPositions = {
-        "top-left": "top-4 left-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
+        "top-left": "top-4 left-4 w-[calc(25%-22px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
         "top-center-left": "top-4 left-[calc(25%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
         "top-center-right": "top-4 left-[calc(50%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
         "top-right": "top-4 right-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
-        "bottom-left": "bottom-4 left-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
+        "bottom-left": "bottom-4 left-4 w-[calc(25%-22px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
         "bottom-center-left": "bottom-4 left-[calc(25%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
         "bottom-center-right": "bottom-4 left-[calc(50%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
         "bottom-right": "bottom-4 right-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
@@ -455,26 +455,7 @@ export default function TournamentOverlay() {
         <h2 className="text-white text-xl font-bold mb-4 text-center">Tournament Control Panel</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-          {/* Timer Controls */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <h3 className="text-white font-semibold mb-3">Timer Controls</h3>
-            <div className="flex flex-col space-y-2">
-              <button
-                onClick={() => setIsRunning(!isRunning)}
-                className={`px-4 py-2 rounded font-semibold ${
-                  isRunning ? "bg-red-600 hover:bg-red-700 text-white" : "bg-green-600 hover:bg-green-700 text-white"
-                }`}
-              >
-                {isRunning ? "⏸️ Pause Timer" : "▶️ Start Timer"}
-              </button>
-              <button
-                onClick={resetTimer}
-                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded font-semibold"
-              >
-                🔄 Reset Timer
-              </button>
-            </div>
-          </div>
+          
 
           {/* Hit Controls */}
           <div className="bg-gray-700 rounded-lg p-4">
