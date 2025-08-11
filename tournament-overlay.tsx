@@ -112,79 +112,6 @@ export default function TournamentOverlay() {
     }))
   }
 
-  const fastForwardRunner = (runnerId: number, seconds = 10) => {
-    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
-    if (iframe) {
-      // First, get the current time
-      iframe.contentWindow?.postMessage('{"event":"command","func":"getCurrentTime","args":""}', "*")
-
-      // Listen for the response and then seek to current time + seconds
-      const handleMessage = (event: MessageEvent) => {
-        if (event.origin !== "https://www.youtube.com") return
-
-        try {
-          const data = JSON.parse(event.data)
-          if (data.event === "infoDelivery" && data.info && typeof data.info.currentTime === "number") {
-            const currentTime = data.info.currentTime
-            const newTime = currentTime + seconds
-
-            // Seek to the new time
-            iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${newTime}, true]}`, "*")
-
-            // Remove the event listener
-            window.removeEventListener("message", handleMessage)
-          }
-        } catch (error) {
-          console.error("Error parsing YouTube message:", error)
-          window.removeEventListener("message", handleMessage)
-        }
-      }
-
-      // Add temporary event listener
-      window.addEventListener("message", handleMessage)
-
-      // Clean up listener after 2 seconds if no response
-      setTimeout(() => {
-        window.removeEventListener("message", handleMessage)
-      }, 2000)
-    }
-  }
-
-  const seekToTime = (runnerId: number, seconds: number) => {
-    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
-    if (iframe) {
-      iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${seconds}, true]}`, "*")
-    }
-  }
-
-  const skipForward = (runnerId: number, skipSeconds = 10) => {
-    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
-    if (iframe) {
-      // Request current time and handle the response
-      const handleTimeResponse = (event: MessageEvent) => {
-        if (event.origin !== "https://www.youtube.com") return
-
-        try {
-          const data = JSON.parse(event.data)
-          if (data.event === "infoDelivery" && data.info && typeof data.info.currentTime === "number") {
-            const newTime = data.info.currentTime + skipSeconds
-            iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${newTime}, true]}`, "*")
-            window.removeEventListener("message", handleTimeResponse)
-          }
-        } catch (error) {
-          console.error("Error handling time response:", error)
-          window.removeEventListener("message", handleTimeResponse)
-        }
-      }
-
-      window.addEventListener("message", handleTimeResponse)
-      iframe.contentWindow?.postMessage('{"event":"command","func":"getCurrentTime","args":""}', "*")
-
-      // Cleanup after timeout
-      setTimeout(() => window.removeEventListener("message", handleTimeResponse), 2000)
-    }
-  }
-
   const controlVideo = (runnerId: number, command: string) => {
     const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
     if (iframe) {
@@ -343,6 +270,41 @@ export default function TournamentOverlay() {
     />
   </div>
 </div>
+{!focusedRunner && (
+  <div className="absolute top-[100px] left-1/2 transform -translate-x-1/2 z-30 w-[90%] max-w-[1600px] px-4">
+    <div className="flex items-center justify-center shadow-2xl">
+      <div
+        className="text-center tracking-wider break-words"
+        style={{
+          fontWeight: '600',
+          WebkitTextStroke: '1px black',
+          color: 'white',
+          fontSize: 'clamp(1rem, 2vw, 2.5rem)',
+          lineHeight: '1.2',
+        }}
+      >
+        <span style={{ color: '#ff0000' }}>
+          Resident Evil 4 Classic Damageless Race Tournament
+        </span>
+        <br />
+        <span>New Game Professional Any% (PC Steam)</span>
+      </div>
+    </div>
+  </div>
+)}
+{!focusedRunner && (
+  <div className="absolute mt-36 left-1/2 transform -translate-x-[55%] z-30 w-[90%] max-w-[1600px] px-4 overflow-hidden pointer-events-none">
+    <div className="flex items-center justify-center shadow-2xl">
+    <img
+      src="https://github.com/Putra3340/MediaSource/blob/main/long%20text.png?raw=true"
+      alt=""
+      className="w-[85%]"
+    />
+  </div>
+  </div>
+)}
+
+
 
 
         {/* Timer - Top Right */}
@@ -537,29 +499,7 @@ export default function TournamentOverlay() {
                     >
                       🔄 Refresh
                     </button>
-                    <button
-                     onClick={() => fastForwardRunner(runner.id, 10)}
-                      className="px-2 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded text-xs"
-                      title={`Fast forward ${runner.name} by 10s`}
-                    >
-                      ⏩ +10s
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <button
-                      onClick={() => fastForwardRunner(runner.id, 30)}
-                      className="px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded text-xs"
-                      title={`Fast forward ${runner.name} by 30s`}
-                    >
-                      ⏩ +30s
-                    </button>
-                    <button
-                      onClick={() => fastForwardRunner(runner.id, -10)}
-                      className="px-2 py-1 bg-cyan-600 hover:bg-cyan-700 text-white rounded text-xs"
-                      title={`Rewind ${runner.name} by 10s`}
-                    >
-                      ⏪ -10s
-                    </button>
+                    
                   </div>
                 </div>
               ))}
