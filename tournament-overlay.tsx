@@ -27,8 +27,8 @@ export default function TournamentOverlay() {
     { id: 4, name: "FirmanGs", youtubeId: "l_IH6-JqKX4", hits: 0, position: "top-right" },
     { id: 5, name: "FedoRas", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-left" },
     { id: 6, name: "Shaddy", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-left" },
-    { id: 7, name: "Underated", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-right" },
-    { id: 8, name: "Dyatt", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-right" },
+    { id: 7, name: "DyattAjja", youtubeId: "l_IH6-JqKX4", hits: 0, position: "bottom-center-right" },
+    { id: 8, name: "-", youtubeId: "dQw4w9WgXcQ", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
@@ -46,6 +46,7 @@ export default function TournamentOverlay() {
   })
   const [editingUrls, setEditingUrls] = useState(false)
   const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
+  const [tempNames, setTempNames] = useState<{ [key: number]: string }>({})
   const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim, @yanto49904  | SELAMAT HUT RI Ke-80!!! 🇮🇩🥳🥳🎈🎉  | Indonesian Hitless Community")
   // Timer logic
   useEffect(() => {
@@ -154,27 +155,31 @@ export default function TournamentOverlay() {
   const handleUrlChange = (runnerId: number, url: string) => {
     setTempUrls((prev) => ({ ...prev, [runnerId]: url }))
   }
-
+const handleNameChange = (runnerId: number, name: string) => {
+    setTempNames((prev) => ({ ...prev, [runnerId]: name }))
+  }
   const applyUrlChanges = () => {
     Object.entries(tempUrls).forEach(([runnerId, url]) => {
       if (url.trim()) {
         updateRunnerUrl(Number.parseInt(runnerId), url.trim())
       }
     })
+    Object.entries(tempNames).forEach(([runnerId, name]) => {
+      if (name.trim()) {
+        setRunners((prev) =>
+          prev.map((runner) => (runner.id === Number.parseInt(runnerId) ? { ...runner, name: name.trim() } : runner)),
+        )
+      }
+    })
+    setTempNames({})
     setTempUrls({})
     setEditingUrls(false)
   }
 
   const cancelUrlChanges = () => {
     setTempUrls({})
+    setTempNames({})
     setEditingUrls(false)
-  }
-
-  const unmuteRunner = (runnerId: number) => {
-    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
-    if (iframe) {
-      iframe.contentWindow?.postMessage('{"event":"command","func":"unMute","args":""}', "*")
-    }
   }
 
   const muteAllRunners = () => {
@@ -259,10 +264,10 @@ export default function TournamentOverlay() {
         {/* Dark overlay for better contrast */}
         <div className="absolute inset-0 bg-black/30" />
 
-
-        {/* Community Logo - Top Center */}
-        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-30">
-  <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
+{!focusedRunner && (
+        
+        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50">
+  <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full z-10 flex items-center justify-center shadow-2xl border-4 border-white">
     <img
       src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Hitless_ID.png"
       alt=""
@@ -270,6 +275,19 @@ export default function TournamentOverlay() {
     />
   </div>
 </div>
+)}
+{focusedRunner && (
+        
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50">
+  <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full z-10 flex items-center justify-center shadow-2xl border-4 border-white">
+    <img
+      src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Hitless_ID.png"
+      alt=""
+      className="w-25 h-25 object-contain rounded-full"
+    />
+  </div>
+</div>
+)}
 {!focusedRunner && (
   <div className="absolute top-[100px] left-1/2 transform -translate-x-1/2 z-30 w-[90%] max-w-[1600px] px-4">
     <div className="flex items-center justify-center shadow-2xl">
@@ -325,6 +343,11 @@ export default function TournamentOverlay() {
             <div>
               <p className="font-semibold text-lg">Commentator 2</p>
               <p className="text-sm text-gray-300">Dani</p>
+            </div>
+            <div className="w-px bg-gray-500"></div>
+            <div>
+              <p className="font-semibold text-lg">Commentator 3</p>
+              <p className="text-sm text-gray-300">Underated</p>
             </div>
           </div>
         </div>
@@ -537,7 +560,20 @@ export default function TournamentOverlay() {
               <div className="space-y-3">
                 {runners.map((runner) => (
                   <div key={runner.id} className="space-y-2">
-                    <label className="text-white text-sm font-medium block">{runner.name}</label>
+                    
+                    <div className="grid grid-cols-1 gap-2">
+                      <div>
+                        <label className="text-white text-xs font-medium block mb-1">Player Name</label>
+                        <input
+                          type="text"
+                          placeholder="Player Name"
+                          defaultValue={runner.name}
+                          onChange={(e) => handleNameChange(runner.id, e.target.value)}
+                          className="w-full px-2 py-1 bg-gray-600 text-white rounded text-xs border border-gray-500 focus:border-blue-400 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white text-xs font-medium block mb-1">YouTube URL</label>
                     <input
                       type="text"
                       placeholder="YouTube URL or Video ID"
@@ -545,6 +581,8 @@ export default function TournamentOverlay() {
                       onChange={(e) => handleUrlChange(runner.id, e.target.value)}
                       className="w-full px-2 py-1 bg-gray-600 text-white rounded text-xs border border-gray-500 focus:border-blue-400 focus:outline-none"
                     />
+                    </div>
+                    </div>
                   </div>
                 ))}
                 <div className="flex space-x-2 mt-3">
