@@ -14,6 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <link
+      href="https://fonts.cdnfonts.com/css/norwester"
+      rel="stylesheet"
+    />
       <body>{children}</body>
     </html>
   )

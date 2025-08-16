@@ -289,15 +289,17 @@ const handleNameChange = (runnerId: number, name: string) => {
 </div>
 )}
 {!focusedRunner && (
-  <div className="absolute top-[100px] left-1/2 transform -translate-x-1/2 z-30 w-[90%] max-w-[1600px] px-4">
+  
+  <div className="absolute top-[90px] left-1/2 transform -translate-x-1/2 z-30 w-[90%] max-w-[1600px] px-4">
     <div className="flex items-center justify-center shadow-2xl">
       <div
-        className="text-center tracking-wider break-words"
+        className="font-norwester text-center tracking-wider break-words"
         style={{
-          fontWeight: '600',
+          fontWeight: '800',
           WebkitTextStroke: '1px black',
           color: 'white',
-          fontSize: 'clamp(1rem, 2vw, 2.5rem)',
+          fontSize: "clamp(1.25rem, 2.5vw, 3rem)",
+
           lineHeight: '1.2',
         }}
       >
