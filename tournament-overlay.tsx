@@ -28,7 +28,7 @@ export default function TournamentOverlay() {
     { id: 5, name: "FedoRas", youtubeId: "kn18U9TJMC8", hits: 0, position: "bottom-left" },
     { id: 6, name: "Shaddy", youtubeId: "ABl0dkcqU9I", hits: 0, position: "bottom-center-left" },
     { id: 7, name: "DyattAjja", youtubeId: "QB6JKYN-Vs8", hits: 0, position: "bottom-center-right" },
-    { id: 8, name: "-", youtubeId: "dQw4w9WgXcQ", hits: 0, position: "bottom-right" },
+    { id: 8, name: "-", youtubeId: "xm3YgoEiEDc", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
