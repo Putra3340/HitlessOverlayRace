@@ -47,7 +47,7 @@ export default function TournamentOverlay() {
   const [editingUrls, setEditingUrls] = useState(false)
   const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
   const [tempNames, setTempNames] = useState<{ [key: number]: string }>({})
-  const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim, @yanto49904  | SELAMAT HUT RI Ke-80!!! 🇮🇩🥳🥳🎈🎉  | Indonesian Hitless Community")
+  const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim, @yanto49904, @v.jonathan.hw_08 | SELAMAT HUT RI Ke-80!!! 🇮🇩🥳🥳🎈🎉  | Indonesian Hitless Community")
   // Timer logic
   useEffect(() => {
     let interval: NodeJS.Timeout
