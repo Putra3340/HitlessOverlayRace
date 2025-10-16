@@ -8,15 +8,15 @@ interface Runner {
   name: string
   youtubeId: string
   hits: number
-  position: "top-left" | "top-right" | "bottom-left" | "bottom-right"
+  position:
+  | "top-left"
+  | "bottom-right"
 }
 
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
-    { id: 1, name: "FedoRas", youtubeId: "ZXNz3fMDHbk", hits: 0, position: "top-left" },
-    { id: 2, name: "Firman Gs", youtubeId: "q1WVgSn-nDU", hits: 0, position: "top-right" },
-    { id: 3, name: "Nyr09", youtubeId: "R9dnD8k87BI", hits: 0, position: "bottom-left" },
-    { id: 4, name: "Seppp", youtubeId: "5jihcQ1pDHA", hits: 0, position: "bottom-right" },
+    { id: 1, name: "Seppp", youtubeId: "Wl959QnD3lM", hits: 0, position: "top-left" },
+    { id: 2, name: "-", youtubeId: "Wl959QnD3lM", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
@@ -30,6 +30,8 @@ export default function TournamentOverlay() {
   })
   const [editingUrls, setEditingUrls] = useState(false)
   const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
+  const [tempNames, setTempNames] = useState<{ [key: number]: string }>({})
+  const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim, @yanto49904, @v.jonathan.hw_08 | SELAMAT HUT RI Ke-80!!! 🇮🇩🥳🥳🎈🎉  | Indonesian Hitless Community")
   // Timer logic
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -41,7 +43,7 @@ export default function TournamentOverlay() {
     return () => clearInterval(interval)
   }, [isRunning])
 
-  
+
   // Audio control logic - mute/unmute based on focus
   useEffect(() => {
     const handleAudioControl = () => {
@@ -95,79 +97,6 @@ export default function TournamentOverlay() {
     }))
   }
 
-  const fastForwardRunner = (runnerId: number, seconds = 10) => {
-    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
-    if (iframe) {
-      // First, get the current time
-      iframe.contentWindow?.postMessage('{"event":"command","func":"getCurrentTime","args":""}', "*")
-
-      // Listen for the response and then seek to current time + seconds
-      const handleMessage = (event: MessageEvent) => {
-        if (event.origin !== "https://www.youtube.com") return
-
-        try {
-          const data = JSON.parse(event.data)
-          if (data.event === "infoDelivery" && data.info && typeof data.info.currentTime === "number") {
-            const currentTime = data.info.currentTime
-            const newTime = currentTime + seconds
-
-            // Seek to the new time
-            iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${newTime}, true]}`, "*")
-
-            // Remove the event listener
-            window.removeEventListener("message", handleMessage)
-          }
-        } catch (error) {
-          console.error("Error parsing YouTube message:", error)
-          window.removeEventListener("message", handleMessage)
-        }
-      }
-
-      // Add temporary event listener
-      window.addEventListener("message", handleMessage)
-
-      // Clean up listener after 2 seconds if no response
-      setTimeout(() => {
-        window.removeEventListener("message", handleMessage)
-      }, 2000)
-    }
-  }
-
-  const seekToTime = (runnerId: number, seconds: number) => {
-    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
-    if (iframe) {
-      iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${seconds}, true]}`, "*")
-    }
-  }
-
-  const skipForward = (runnerId: number, skipSeconds = 10) => {
-    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
-    if (iframe) {
-      // Request current time and handle the response
-      const handleTimeResponse = (event: MessageEvent) => {
-        if (event.origin !== "https://www.youtube.com") return
-
-        try {
-          const data = JSON.parse(event.data)
-          if (data.event === "infoDelivery" && data.info && typeof data.info.currentTime === "number") {
-            const newTime = data.info.currentTime + skipSeconds
-            iframe.contentWindow?.postMessage(`{"event":"command","func":"seekTo","args":[${newTime}, true]}`, "*")
-            window.removeEventListener("message", handleTimeResponse)
-          }
-        } catch (error) {
-          console.error("Error handling time response:", error)
-          window.removeEventListener("message", handleTimeResponse)
-        }
-      }
-
-      window.addEventListener("message", handleTimeResponse)
-      iframe.contentWindow?.postMessage('{"event":"command","func":"getCurrentTime","args":""}', "*")
-
-      // Cleanup after timeout
-      setTimeout(() => window.removeEventListener("message", handleTimeResponse), 2000)
-    }
-  }
-
   const controlVideo = (runnerId: number, command: string) => {
     const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
     if (iframe) {
@@ -210,27 +139,31 @@ export default function TournamentOverlay() {
   const handleUrlChange = (runnerId: number, url: string) => {
     setTempUrls((prev) => ({ ...prev, [runnerId]: url }))
   }
-
+  const handleNameChange = (runnerId: number, name: string) => {
+    setTempNames((prev) => ({ ...prev, [runnerId]: name }))
+  }
   const applyUrlChanges = () => {
     Object.entries(tempUrls).forEach(([runnerId, url]) => {
       if (url.trim()) {
         updateRunnerUrl(Number.parseInt(runnerId), url.trim())
       }
     })
+    Object.entries(tempNames).forEach(([runnerId, name]) => {
+      if (name.trim()) {
+        setRunners((prev) =>
+          prev.map((runner) => (runner.id === Number.parseInt(runnerId) ? { ...runner, name: name.trim() } : runner)),
+        )
+      }
+    })
+    setTempNames({})
     setTempUrls({})
     setEditingUrls(false)
   }
 
   const cancelUrlChanges = () => {
     setTempUrls({})
+    setTempNames({})
     setEditingUrls(false)
-  }
-
-  const unmuteRunner = (runnerId: number) => {
-    const iframe = document.querySelector(`iframe[title="Player ${runnerId} Stream"]`) as HTMLIFrameElement
-    if (iframe) {
-      iframe.contentWindow?.postMessage('{"event":"command","func":"unMute","args":""}', "*")
-    }
   }
 
   const muteAllRunners = () => {
@@ -251,28 +184,42 @@ export default function TournamentOverlay() {
     if (!focusedRunner) {
       // Normal 2x2 grid positioning
       const gridPositions = {
-        "top-left": "top-4 left-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
-        "top-right": "top-4 right-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
-        "bottom-left": "bottom-4 left-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
-        "bottom-right": "bottom-4 right-4 w-[calc(50%-24px)] h-[calc(50%-24px)]",
+        "top-left": "top-4 left-4 w-[calc(51%-48px)] h-[calc(51%-24px)] mt-[calc(60px)]",
+        "bottom-right": "bottom-4 right-4 w-[calc(51%-48px)] h-[calc(51%-24px)] mb-[calc(60px)]",
       }
       return { className: gridPositions[runner.position], style: {} }
     }
 
     if (isFocused) {
-      // Main focused video - large on the left
-      return { className: "top-4 left-4 w-[calc(65%-24px)] h-[calc(100%-32px)]", style: {} }
+      // Main focused video - large on the left (75% width)
+      return { className: "top-4 left-4 w-[calc(70%-24px)] h-[calc(100%-32px)]", style: {} }
     }
 
-    // Thumbnail positioning on the right side - using inline styles for better compatibility
+    // Thumbnail positioning on the right side - 2x4 grid layout, skipping first position
     const otherRunners = runners.filter((r) => r.id !== focusedRunner)
     const runnerIndex = otherRunners.findIndex((r) => r.id === runner.id)
-    const thumbnailHeight = 320 // Fixed height for thumbnails
+    const thumbnailHeight = 240 // Height for thumbnails
     const spacing = 16 // Space between thumbnails
-    const topOffset = 16 + runnerIndex * (thumbnailHeight + spacing) // Start from top with proper spacing
+
+    // Define the grid positions manually, skipping position [1,0] (top-right)
+    // Available positions: [0,0], [0,1], [1,1], [0,2], [1,2], [0,3], [1,3]
+    const gridPositions = [
+      { column: 0, row: 0 }, // First thumbnail: left column, top row
+      { column: 0, row: 1 }, // Second thumbnail: left column, second row
+      { column: 1, row: 1 }, // Third thumbnail: right column, second row (skipping [1,0])
+      { column: 0, row: 2 }, // Fourth thumbnail: left column, third row
+      { column: 1, row: 2 }, // Fifth thumbnail: right column, third row
+      { column: 0, row: 3 }, // Sixth thumbnail: left column, fourth row
+      { column: 1, row: 3 }, // Seventh thumbnail: right column, fourth row
+    ]
+
+    const position = gridPositions[runnerIndex] || { column: 0, row: 0 }
+
+    const leftOffset = position.column === 0 ? "right-[calc(15%+16px)]" : "right-4"
+    const topOffset = 16 + position.row * (thumbnailHeight + spacing)
 
     return {
-      className: "right-4 w-[calc(35%-24px)]",
+      className: `${leftOffset} w-[calc(15%-12px)]`,
       style: {
         top: `${topOffset}px`,
         height: `${thumbnailHeight}px`,
@@ -281,7 +228,7 @@ export default function TournamentOverlay() {
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-4 bg-gray-900 min-h-screen">
+    <div className="flex flex-col items-center space-y-4 bg-gray-900 min-h-screen">
       {/* Main Overlay Panel - 1920x1080 */}
       <div className="w-[1920px] h-[1080px] relative overflow-hidden bg-gradient-to-r from-red-900 via-gray-800 to-gray-100 border-4 border-gray-600 rounded-lg">
         {/* RE4 Background Image */}
@@ -289,29 +236,80 @@ export default function TournamentOverlay() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('https://static1.thegamerimages.com/wordpress/wp-content/uploads/2021/04/pjimage-97-1.jpg')",
+            filter: "blur(6px)", // you can tweak this value
           }}
         />
 
         {/* Dark overlay for better contrast */}
         <div className="absolute inset-0 bg-black/30" />
 
+        {!true && (
 
-        {/* Community Logo - Top Center */}
-        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-30">
-  <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center shadow-2xl border-4 border-white">
-    <img
-      src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Hitless_ID.png"
-      alt=""
-      className="w-25 h-25 object-contain rounded-full"
-    />
-  </div>
-</div>
+          <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50">
+            <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full z-10 flex items-center justify-center shadow-2xl border-4 border-white">
+              <img
+                src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Hitless_ID.png"
+                alt=""
+                className="w-25 h-25 object-contain rounded-full"
+              />
+            </div>
+          </div>
+        )}
+        {!focusedRunner && (
+
+          <div className="absolute top-[5%] right-[20%] transform z-50">
+            <div className="w-60 h-60 bg-gradient-to-br from-orange-500 to-red-600 z-10 flex items-center justify-center shadow-2xl border-4 border-white">
+              <img
+                src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Hitless_ID.png"
+                alt=""
+                className="w-25 h-25 object-contain"
+              />
+            </div>
+          </div>
+        )}
+        {!focusedRunner && (
+
+          <div className="absolute top-80 right-2 transform z-30 w-[90%] max-w-[1000px]">
+            <div className="flex items-center justify-center shadow-2xl">
+              <div
+                className="font-norwester text-center tracking-wider break-words"
+                style={{
+                  fontWeight: '800',
+                  WebkitTextStroke: '1px black',
+                  color: 'white',
+                  fontSize: "clamp(1.25rem, 2.5vw, 3rem)",
+                  lineHeight: '1.2',
+                }}
+              >
+                <span style={{ color: '#ff0000' }}>
+                    RE4 Classic Separate Ways
+                </span>
+                <br />
+                <span>Any % Damageless Race (PC Steam)</span>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Center Content */}
+        {!true && (
+          <div className="absolute mt-36 left-1/2 transform -translate-x-[55%] z-30 w-[90%] max-w-[1600px] px-4 overflow-hidden pointer-events-none">
+            <div className="flex items-center justify-center shadow-2xl">
+              <img
+                src="https://github.com/Putra3340/MediaSource/blob/main/long%20text.png?raw=true"
+                alt=""
+                className="w-[85%]"
+              />
+            </div>
+          </div>
+        )}
+
+
 
 
         {/* Timer - Top Right */}
         <div className="absolute top-6 right-6 z-30">
           <div className="bg-black/80 backdrop-blur-sm rounded-xl p-4 border-4 border-yellow-500 shadow-2xl">
-            <div className="text-4xl font-mono font-bold text-white text-center tracking-wider">ㅤㅤㅤㅤ</div>
+            <div className="text-4xl font-mono font-bold text-white text-center tracking-wider">ㅤㅤㅤㅤㅤㅤ</div>
           </div>
         </div>
 
@@ -320,15 +318,29 @@ export default function TournamentOverlay() {
           <div className="flex space-x-8 text-white text-center">
             <div>
               <p className="font-semibold text-lg">Commentator 1</p>
-              <p className="text-sm text-gray-300">AgungSP</p>
+              <p className="text-sm text-gray-300">b</p>
             </div>
             <div className="w-px bg-gray-500"></div>
             <div>
               <p className="font-semibold text-lg">Commentator 2</p>
+              <p className="text-sm text-gray-300">Dani</p>
+            </div>
+            <div className="w-px bg-gray-500"></div>
+            <div>
+              <p className="font-semibold text-lg">Commentator 3</p>
               <p className="text-sm text-gray-300">Underated</p>
             </div>
           </div>
         </div>
+        {/* Sponsor Running Text Overlay */}
+        <div className="absolute bottom-0 left-0 w-full h-12 bg-black/70 backdrop-blur-sm z-20 overflow-hidden border-t-2 border-gray-500">
+          <div className="relative w-full h-full flex items-center">
+            <div className="absolute whitespace-nowrap text-white text-2xl font-bold animate-marquee">
+              {sponsorText}
+            </div>
+          </div>
+        </div>
+
 
         {/* Runner Videos - Persistent iframes with dynamic positioning */}
         {runners.map((runner) => {
@@ -371,25 +383,22 @@ export default function TournamentOverlay() {
                 {/* Player Name - Dynamic sizing based on focus */}
                 <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10">
                   <div
-                    className={`bg-black/80 backdrop-blur-sm rounded-full border-2 ${
-                      isFocused ? "px-6 py-3 border-yellow-400" : "px-4 py-2 border-white"
-                    }`}
+                    className={`bg-black/80 backdrop-blur-sm rounded-full border-2 ${isFocused ? "px-6 py-3 border-yellow-400" : "px-4 py-2 border-white"
+                      }`}
                   >
                     <h3
-                      className={`text-white font-bold text-center ${
-                        isFocused ? "text-2xl" : isOtherFocused ? "text-sm" : "text-xl"
-                      }`}
+                      className={`text-white font-bold text-center ${isFocused ? "text-2xl" : isOtherFocused ? "text-sm" : "text-xl"
+                        }`}
                     >
                       {runner.name}
                     </h3>
                     <p
-                      className={`text-center mt-1 font-semibold ${
-                        isFocused
+                      className={`text-center mt-1 font-semibold ${isFocused
                           ? "text-yellow-300 text-lg"
                           : isOtherFocused
                             ? "text-gray-300 text-xs"
                             : "text-gray-300 text-sm"
-                      }`}
+                        }`}
                     >
                       Hits: {runner.hits}
                     </p>
@@ -397,7 +406,7 @@ export default function TournamentOverlay() {
                 </div>
 
 
-                
+
               </div>
             </div>
           )
@@ -405,30 +414,11 @@ export default function TournamentOverlay() {
       </div>
 
       {/* Control Panel - Separate from main overlay */}
-      <div className="w-full max-w-6xl bg-gray-800 rounded-lg p-6 border-2 border-gray-600">
+      <div className="w-full bg-gray-800 rounded-lg p-6 border-2 border-gray-600">
         <h2 className="text-white text-xl font-bold mb-4 text-center">Tournament Control Panel</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-          {/* Timer Controls */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <h3 className="text-white font-semibold mb-3">Timer Controls</h3>
-            <div className="flex flex-col space-y-2">
-              <button
-                onClick={() => setIsRunning(!isRunning)}
-                className={`px-4 py-2 rounded font-semibold ${
-                  isRunning ? "bg-red-600 hover:bg-red-700 text-white" : "bg-green-600 hover:bg-green-700 text-white"
-                }`}
-              >
-                {isRunning ? "⏸️ Pause Timer" : "▶️ Start Timer"}
-              </button>
-              <button
-                onClick={resetTimer}
-                className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded font-semibold"
-              >
-                🔄 Reset Timer
-              </button>
-            </div>
-          </div>
+
 
           {/* Hit Controls */}
           <div className="bg-gray-700 rounded-lg p-4">
@@ -446,8 +436,8 @@ export default function TournamentOverlay() {
               </div>
             </div>
           </div>
-{/* Audio Controls */}
-<div className="bg-gray-700 rounded-lg p-4">
+          {/* Audio Controls */}
+          <div className="bg-gray-700 rounded-lg p-4">
             <h3 className="text-white font-semibold mb-3">Audio Controls</h3>
             <div className="flex flex-col space-y-2">
               <button
@@ -495,108 +485,212 @@ export default function TournamentOverlay() {
 
           {/* Network Recovery Controls */}
           <div className="bg-gray-700 rounded-lg p-4">
-            <h3 className="text-white font-semibold mb-3">Network Recovery</h3>
-            <div className="space-y-3">
-              {runners.map((runner) => (
-                <div key={runner.id} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-white text-sm font-medium">{runner.name}</span>
-                  </div>
-                  <div className="grid grid-cols-2 gap-1">
+  <h3 className="text-white font-semibold mb-3">Network Recovery</h3>
+
+  {/* grid for runners */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {runners.map((runner) => (
+      <div key={runner.id} className="space-y-2 bg-gray-800 p-3 rounded">
+        <div className="flex items-center justify-between">
+          <span className="text-white text-sm font-medium">
+            {runner.name}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => refreshRunner(runner.id)}
+            className="px-2 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs"
+            title={`Refresh ${runner.name} stream`}
+          >
+            🔄 Refresh
+          </button>
+          
+        </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+
+          {/* YouTube URL Controls */}
+          
+            {/* Section 1 */}
+            <div className="bg-gray-700 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-white font-semibold">YouTube URLs (Group 1)</h3>
+                <button
+                  onClick={() => setEditingUrls(!editingUrls)}
+                  className={`px-3 py-1 rounded text-xs font-semibold ${editingUrls
+                      ? "bg-red-600 hover:bg-red-700 text-white"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
+                    }`}
+                >
+                  {editingUrls ? "Cancel" : "Edit URLs"}
+                </button>
+              </div>
+
+              {!editingUrls ? (
+                <div className="space-y-2">
+                  {runners.slice(0, Math.ceil(runners.length / 2)).map((runner) => (
+                    <div key={runner.id} className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-white text-sm font-medium">
+                          {runner.name}
+                        </span>
+                      </div>
+                      <div
+                        className="text-xs text-gray-400 truncate"
+                        title={runner.youtubeId}
+                      >
+                        ID: {runner.youtubeId}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {runners.slice(0, Math.ceil(runners.length / 2)).map((runner) => (
+                    <div key={runner.id} className="space-y-2">
+                      <div className="grid grid-cols-1 gap-2">
+                        <div>
+                          <label className="text-white text-xs font-medium block mb-1">
+                            Player Name
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Player Name"
+                            defaultValue={runner.name}
+                            onChange={(e) =>
+                              handleNameChange(runner.id, e.target.value)
+                            }
+                            className="w-full px-2 py-1 bg-gray-600 text-white rounded text-xs border border-gray-500 focus:border-blue-400 focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-white text-xs font-medium block mb-1">
+                            YouTube URL
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="YouTube URL or Video ID"
+                            defaultValue={runner.youtubeId}
+                            onChange={(e) =>
+                              handleUrlChange(runner.id, e.target.value)
+                            }
+                            className="w-full px-2 py-1 bg-gray-600 text-white rounded text-xs border border-gray-500 focus:border-blue-400 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="flex space-x-2 mt-3">
                     <button
-                      onClick={() => refreshRunner(runner.id)}
-                      className="px-2 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-xs"
-                      title={`Refresh ${runner.name} stream`}
+                      onClick={applyUrlChanges}
+                      className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-semibold"
                     >
-                      🔄 Refresh
+                      ✅ Apply Changes
                     </button>
                     <button
-                     onClick={() => fastForwardRunner(runner.id, 10)}
-                      className="px-2 py-1 bg-yellow-600 hover:bg-yellow-700 text-white rounded text-xs"
-                      title={`Fast forward ${runner.name} by 10s`}
+                      onClick={cancelUrlChanges}
+                      className="flex-1 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-xs font-semibold"
                     >
-                      ⏩ +10s
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-2 gap-1">
-                    <button
-                      onClick={() => fastForwardRunner(runner.id, 30)}
-                      className="px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white rounded text-xs"
-                      title={`Fast forward ${runner.name} by 30s`}
-                    >
-                      ⏩ +30s
-                    </button>
-                    <button
-                      onClick={() => fastForwardRunner(runner.id, -10)}
-                      className="px-2 py-1 bg-cyan-600 hover:bg-cyan-700 text-white rounded text-xs"
-                      title={`Rewind ${runner.name} by 10s`}
-                    >
-                      ⏪ -10s
+                      ❌ Cancel
                     </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* YouTube URL Controls */}
-          <div className="bg-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-semibold">YouTube URLs</h3>
-              <button
-                onClick={() => setEditingUrls(!editingUrls)}
-                className={`px-3 py-1 rounded text-xs font-semibold ${
-                  editingUrls ? "bg-red-600 hover:bg-red-700 text-white" : "bg-blue-600 hover:bg-blue-700 text-white"
-                }`}
-              >
-                {editingUrls ? "Cancel" : "Edit URLs"}
-              </button>
+              )}
             </div>
 
-            {!editingUrls ? (
-              <div className="space-y-2">
-                {runners.map((runner) => (
-                  <div key={runner.id} className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-white text-sm font-medium">{runner.name}</span>
-                    </div>
-                    <div className="text-xs text-gray-400 truncate" title={runner.youtubeId}>
-                      ID: {runner.youtubeId}
-                    </div>
-                  </div>
-                ))}
+            {/* Section 2 */}
+            <div className="bg-gray-700 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-white font-semibold">YouTube URLs (Group 2)</h3>
+                <button
+                  onClick={() => setEditingUrls(!editingUrls)}
+                  className={`px-3 py-1 rounded text-xs font-semibold ${editingUrls
+                      ? "bg-red-600 hover:bg-red-700 text-white"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
+                    }`}
+                >
+                  {editingUrls ? "Cancel" : "Edit URLs"}
+                </button>
               </div>
-            ) : (
-              <div className="space-y-3">
-                {runners.map((runner) => (
-                  <div key={runner.id} className="space-y-2">
-                    <label className="text-white text-sm font-medium block">{runner.name}</label>
-                    <input
-                      type="text"
-                      placeholder="YouTube URL or Video ID"
-                      defaultValue={runner.youtubeId}
-                      onChange={(e) => handleUrlChange(runner.id, e.target.value)}
-                      className="w-full px-2 py-1 bg-gray-600 text-white rounded text-xs border border-gray-500 focus:border-blue-400 focus:outline-none"
-                    />
-                  </div>
-                ))}
-                <div className="flex space-x-2 mt-3">
-                  <button
-                    onClick={applyUrlChanges}
-                    className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-semibold"
-                  >
-                    ✅ Apply Changes
-                  </button>
-                  <button
-                    onClick={cancelUrlChanges}
-                    className="flex-1 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-xs font-semibold"
-                  >
-                    ❌ Cancel
-                  </button>
+
+              {!editingUrls ? (
+                <div className="space-y-2">
+                  {runners.slice(Math.ceil(runners.length / 2)).map((runner) => (
+                    <div key={runner.id} className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-white text-sm font-medium">
+                          {runner.name}
+                        </span>
+                      </div>
+                      <div
+                        className="text-xs text-gray-400 truncate"
+                        title={runner.youtubeId}
+                      >
+                        ID: {runner.youtubeId}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-            )}
-          </div>
+              ) : (
+                <div className="space-y-3">
+                  {runners.slice(Math.ceil(runners.length / 2)).map((runner) => (
+                    <div key={runner.id} className="space-y-2">
+                      <div className="grid grid-cols-1 gap-2">
+                        <div>
+                          <label className="text-white text-xs font-medium block mb-1">
+                            Player Name
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Player Name"
+                            defaultValue={runner.name}
+                            onChange={(e) =>
+                              handleNameChange(runner.id, e.target.value)
+                            }
+                            className="w-full px-2 py-1 bg-gray-600 text-white rounded text-xs border border-gray-500 focus:border-blue-400 focus:outline-none"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-white text-xs font-medium block mb-1">
+                            YouTube URL
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="YouTube URL or Video ID"
+                            defaultValue={runner.youtubeId}
+                            onChange={(e) =>
+                              handleUrlChange(runner.id, e.target.value)
+                            }
+                            className="w-full px-2 py-1 bg-gray-600 text-white rounded text-xs border border-gray-500 focus:border-blue-400 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="flex space-x-2 mt-3">
+                    <button
+                      onClick={applyUrlChanges}
+                      className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-semibold"
+                    >
+                      ✅ Apply Changes
+                    </button>
+                    <button
+                      onClick={cancelUrlChanges}
+                      className="flex-1 px-3 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded text-xs font-semibold"
+                    >
+                      ❌ Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          
         </div>
 
         {/* Status Display */}

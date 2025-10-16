@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Overlay Hitless by Putra3340',
+  description: 'Properti milik IHC',
+  generator: 'Putra3340',
 }
 
 export default function RootLayout({
@@ -14,6 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <link
+      href="https://fonts.cdnfonts.com/css/norwester"
+      rel="stylesheet"
+    />
       <body>{children}</body>
     </html>
   )
