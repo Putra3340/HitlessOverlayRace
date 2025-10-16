@@ -10,25 +10,13 @@ interface Runner {
   hits: number
   position:
   | "top-left"
-  | "top-center-left"
-  | "top-center-right"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-center-left"
-  | "bottom-center-right"
   | "bottom-right"
 }
 
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
-    { id: 1, name: "Seppp", youtubeId: "sBzxZRWnuDE", hits: 0, position: "top-left" },
-    { id: 2, name: "Bg Dap", youtubeId: "vTjsJ5PR8F0", hits: 0, position: "top-center-left" },
-    { id: 3, name: "NYR 9", youtubeId: "lWqQcCmEtv4", hits: 0, position: "top-center-right" },
-    { id: 4, name: "FirmanGs", youtubeId: "mrWFsxOoYeg", hits: 0, position: "top-right" },
-    { id: 5, name: "FedoRas", youtubeId: "kn18U9TJMC8", hits: 0, position: "bottom-left" },
-    { id: 6, name: "Shaddy", youtubeId: "ABl0dkcqU9I", hits: 0, position: "bottom-center-left" },
-    { id: 7, name: "DyattAjja", youtubeId: "QB6JKYN-Vs8", hits: 0, position: "bottom-center-right" },
-    { id: 8, name: "-", youtubeId: "xm3YgoEiEDc", hits: 0, position: "bottom-right" },
+    { id: 1, name: "Seppp", youtubeId: "Wl959QnD3lM", hits: 0, position: "top-left" },
+    { id: 2, name: "-", youtubeId: "Wl959QnD3lM", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
@@ -39,10 +27,6 @@ export default function TournamentOverlay() {
     2: 0,
     3: 0,
     4: 0,
-    5: 0,
-    6: 0,
-    7: 0,
-    8: 0,
   })
   const [editingUrls, setEditingUrls] = useState(false)
   const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
@@ -200,14 +184,8 @@ export default function TournamentOverlay() {
     if (!focusedRunner) {
       // Normal 2x2 grid positioning
       const gridPositions = {
-        "top-left": "top-4 left-4 w-[calc(25%-22px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
-        "top-center-left": "top-4 left-[calc(25%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
-        "top-center-right": "top-4 left-[calc(50%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
-        "top-right": "top-4 right-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mt-[calc(10%-4px)]",
-        "bottom-left": "bottom-4 left-4 w-[calc(25%-22px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
-        "bottom-center-left": "bottom-4 left-[calc(25%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
-        "bottom-center-right": "bottom-4 left-[calc(50%+4px)] w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
-        "bottom-right": "bottom-4 right-4 w-[calc(25%-16px)] h-[calc(30%-24px)] mb-[calc(10%-4px)]",
+        "top-left": "top-4 left-4 w-[calc(51%-48px)] h-[calc(51%-24px)] mt-[calc(60px)]",
+        "bottom-right": "bottom-4 right-4 w-[calc(51%-48px)] h-[calc(51%-24px)] mb-[calc(60px)]",
       }
       return { className: gridPositions[runner.position], style: {} }
     }
@@ -258,13 +236,14 @@ export default function TournamentOverlay() {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('https://static1.thegamerimages.com/wordpress/wp-content/uploads/2021/04/pjimage-97-1.jpg')",
+            filter: "blur(6px)", // you can tweak this value
           }}
         />
 
         {/* Dark overlay for better contrast */}
         <div className="absolute inset-0 bg-black/30" />
 
-        {!focusedRunner && (
+        {!true && (
 
           <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-50">
             <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full z-10 flex items-center justify-center shadow-2xl border-4 border-white">
@@ -276,21 +255,21 @@ export default function TournamentOverlay() {
             </div>
           </div>
         )}
-        {focusedRunner && (
+        {!focusedRunner && (
 
-          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50">
-            <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-600 rounded-full z-10 flex items-center justify-center shadow-2xl border-4 border-white">
+          <div className="absolute top-[5%] right-[20%] transform z-50">
+            <div className="w-60 h-60 bg-gradient-to-br from-orange-500 to-red-600 z-10 flex items-center justify-center shadow-2xl border-4 border-white">
               <img
                 src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Hitless_ID.png"
                 alt=""
-                className="w-25 h-25 object-contain rounded-full"
+                className="w-25 h-25 object-contain"
               />
             </div>
           </div>
         )}
         {!focusedRunner && (
 
-          <div className="absolute top-[90px] left-1/2 transform -translate-x-1/2 z-30 w-[90%] max-w-[1600px] px-4">
+          <div className="absolute top-80 right-2 transform z-30 w-[90%] max-w-[1000px]">
             <div className="flex items-center justify-center shadow-2xl">
               <div
                 className="font-norwester text-center tracking-wider break-words"
@@ -299,20 +278,20 @@ export default function TournamentOverlay() {
                   WebkitTextStroke: '1px black',
                   color: 'white',
                   fontSize: "clamp(1.25rem, 2.5vw, 3rem)",
-
                   lineHeight: '1.2',
                 }}
               >
                 <span style={{ color: '#ff0000' }}>
-                  Resident Evil 4 Classic Damageless Race Tournament
+                    RE4 Classic Separate Ways
                 </span>
                 <br />
-                <span>New Game Professional Any% (PC Steam)</span>
+                <span>Any % Damageless Race (PC Steam)</span>
               </div>
             </div>
           </div>
         )}
-        {!focusedRunner && (
+        {/* Center Content */}
+        {!true && (
           <div className="absolute mt-36 left-1/2 transform -translate-x-[55%] z-30 w-[90%] max-w-[1600px] px-4 overflow-hidden pointer-events-none">
             <div className="flex items-center justify-center shadow-2xl">
               <img
