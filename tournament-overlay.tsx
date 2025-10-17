@@ -268,7 +268,7 @@ export default function TournamentOverlay() {
         )}
         {!focusedRunner && (
 
-          <div className="absolute bottom-28 left-1/4 transform z-30 w-[100%] max-w-[1000px]">
+          <div className="absolute bottom-28  -translate-y-[-29%] left-1/4 transform z-30 w-[100%] max-w-[1000px]">
             <div className="flex items-center justify-center ">
               <div
                 className="font-norwester text-center tracking-wider break-words"
@@ -281,17 +281,17 @@ export default function TournamentOverlay() {
                 }}
               >
                 <span style={{ color: '#ff0000' }}>
-                    Resident Evil 7 Madhouse Any% 
+                    Resident Evil 7 Madhouse Damageless Race 
                 </span>
                 <br />
-                <span>Damageless Race (PC STEAM)</span>
+                <span>Category : New Game Madhouse Any% (PC)</span>
               </div>
             </div>
           </div>
         )}
         {/* Center Content */}
         {!focusedRunner && (
-          <div className="absolute bottom-1 left-1/2 transform -translate-x-[55%] -translate-y-[-8%] z-30 w-[90%] max-w-[1600px] overflow-hidden pointer-events-none">
+          <div className="absolute bottom-1 left-1/2 transform -translate-x-[55%] -translate-y-[-13%] z-30 w-[90%] max-w-[1600px] overflow-hidden pointer-events-none">
             <div className="flex items-center justify-center shadow-2xl">
               <img
                 src="https://github.com/Putra3340/MediaSource/blob/main/long%20text.png?raw=true"
