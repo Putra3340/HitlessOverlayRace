@@ -256,7 +256,7 @@ export default function TournamentOverlay() {
           </div>
         )}
         {!focusedRunner && (
-        <div className="absolute top-[2%] left-[21%] transform -translate-x-1/2 z-50">
+        <div className="absolute top-[2%] left-[22%] transform -translate-x-1/2 z-50">
           <div className="w-[45%] h-[45%] z-10 flex items-center justify-center bg-white/10 shadow-2xl border-4 border-black">
             <img
               src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/re4c_sw.webp"
@@ -268,7 +268,7 @@ export default function TournamentOverlay() {
         )}
         {!focusedRunner && (
 
-          <div className="absolute bottom-28 left-1/4 transform z-30 w-[100%] max-w-[1000px]">
+          <div className="absolute bottom-28  -translate-y-[-25%] left-1/4 transform z-30 w-[100%] max-w-[1028px]">
             <div className="flex items-center justify-center ">
               <div
                 className="font-norwester text-center tracking-wider break-words"
@@ -281,17 +281,17 @@ export default function TournamentOverlay() {
                 }}
               >
                 <span style={{ color: '#ff0000' }}>
-                RE4 Classic Separate Ways Any% 
+                RE4 Classic Separate Ways Damageless Race
                 </span>
                 <br />
-                <span>Damageless Race (PC STEAM)</span>
+                <span>Category : New Game Any% (PC)</span>
               </div>
             </div>
           </div>
         )}
         {/* Center Content */}
         {!focusedRunner && (
-          <div className="absolute bottom-1 left-1/2 transform -translate-x-[55%] -translate-y-[-8%] z-30 w-[90%] max-w-[1600px] overflow-hidden pointer-events-none">
+          <div className="absolute bottom-1 left-1/2 transform -translate-x-[55%] -translate-y-[-13%] z-30 w-[90%] max-w-[1600px] overflow-hidden pointer-events-none">
             <div className="flex items-center justify-center shadow-2xl">
               <img
                 src="https://github.com/Putra3340/MediaSource/blob/main/long%20text.png?raw=true"
