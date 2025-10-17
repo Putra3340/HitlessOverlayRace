@@ -15,8 +15,8 @@ interface Runner {
 
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
-    { id: 1, name: "Seppp", youtubeId: "Wl959QnD3lM", hits: 0, position: "top-left" },
-    { id: 2, name: "-", youtubeId: "Wl959QnD3lM", hits: 0, position: "bottom-right" },
+    { id: 1, name: "Bg Dap", youtubeId: "t6nfJOuj8AE", hits: 0, position: "top-left" },
+    { id: 2, name: "Dani", youtubeId: "t6nfJOuj8AE", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
@@ -31,7 +31,7 @@ export default function TournamentOverlay() {
   const [editingUrls, setEditingUrls] = useState(false)
   const [tempUrls, setTempUrls] = useState<{ [key: number]: string }>({})
   const [tempNames, setTempNames] = useState<{ [key: number]: string }>({})
-  const [sponsorText, setSponsorText] = useState("Disponsori oleh : @zhouiechai99, @arian45_, @anonim, @yanto49904, @v.jonathan.hw_08 | SELAMAT HUT RI Ke-80!!! 🇮🇩🥳🥳🎈🎉  | Indonesian Hitless Community")
+  const [sponsorText, setSponsorText] = useState("Jangan Lupa Like, Comment dan Follow supaya IHC ada event-event yang menarik kedepannya | Indonesian Hitless Community")
   // Timer logic
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -184,47 +184,35 @@ export default function TournamentOverlay() {
     if (!focusedRunner) {
       // Normal 2x2 grid positioning
       const gridPositions = {
-        "top-left": "top-4 left-4 w-[calc(51%-48px)] h-[calc(51%-24px)] mt-[calc(60px)]",
-        "bottom-right": "bottom-4 right-4 w-[calc(51%-48px)] h-[calc(51%-24px)] mb-[calc(60px)]",
+        "top-left": "top-4 left-4 w-[calc(51%-48px)] h-[calc(51%-24px)] mt-[calc(9%)]",
+        "bottom-right": "bottom-4 right-4 w-[calc(51%-48px)] h-[calc(51%-24px)] mb-[calc(18%)]",
       }
       return { className: gridPositions[runner.position], style: {} }
     }
 
     if (isFocused) {
-      // Main focused video - large on the left (75% width)
-      return { className: "top-4 left-4 w-[calc(70%-24px)] h-[calc(100%-32px)]", style: {} }
+      // Main focused video - large on the left (100% width)
+      return { className: "top-4 left-4 w-[calc(100%-24px)] h-[calc(98%-32px)]", style: {} }
     }
 
-    // Thumbnail positioning on the right side - 2x4 grid layout, skipping first position
     const otherRunners = runners.filter((r) => r.id !== focusedRunner)
-    const runnerIndex = otherRunners.findIndex((r) => r.id === runner.id)
-    const thumbnailHeight = 240 // Height for thumbnails
-    const spacing = 16 // Space between thumbnails
+    const thumbnailHeight = 360
+    const spacing = 16
 
-    // Define the grid positions manually, skipping position [1,0] (top-right)
-    // Available positions: [0,0], [0,1], [1,1], [0,2], [1,2], [0,3], [1,3]
-    const gridPositions = [
-      { column: 0, row: 0 }, // First thumbnail: left column, top row
-      { column: 0, row: 1 }, // Second thumbnail: left column, second row
-      { column: 1, row: 1 }, // Third thumbnail: right column, second row (skipping [1,0])
-      { column: 0, row: 2 }, // Fourth thumbnail: left column, third row
-      { column: 1, row: 2 }, // Fifth thumbnail: right column, third row
-      { column: 0, row: 3 }, // Sixth thumbnail: left column, fourth row
-      { column: 1, row: 3 }, // Seventh thumbnail: right column, fourth row
-    ]
-
-    const position = gridPositions[runnerIndex] || { column: 0, row: 0 }
-
-    const leftOffset = position.column === 0 ? "right-[calc(15%+16px)]" : "right-4"
-    const topOffset = 16 + position.row * (thumbnailHeight + spacing)
-
-    return {
-      className: `${leftOffset} w-[calc(15%-12px)]`,
-      style: {
-        top: `${topOffset}px`,
-        height: `${thumbnailHeight}px`,
-      },
-    }
+    return otherRunners.map((runner, index) => ({
+      id: runner.id,
+      className: `
+        absolute
+        bottom-16
+        left-16
+        z-[9999]
+        shadow-2xl rounded-xl border-2 border-white
+        bg-black/40 backdrop-blur-sm
+        transition-all duration-500 ease-in-out
+        w-[21%]
+        h-[21%]
+      `,
+    })).find((r) => r.id === runner.id)!
   }
 
   return (
@@ -235,7 +223,7 @@ export default function TournamentOverlay() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('https://static1.thegamerimages.com/wordpress/wp-content/uploads/2021/04/pjimage-97-1.jpg')",
+            backgroundImage: "url('https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/img.jpg')",
             filter: "blur(6px)", // you can tweak this value
           }}
         />
@@ -257,20 +245,31 @@ export default function TournamentOverlay() {
         )}
         {!focusedRunner && (
 
-          <div className="absolute top-[5%] right-[20%] transform z-50">
-            <div className="w-60 h-60 bg-gradient-to-br from-orange-500 to-red-600 z-10 flex items-center justify-center shadow-2xl border-4 border-white">
+          <div className="absolute top-[8%] left-1/2 transform -translate-x-1/2 z-50">
+            <div className="w-24 h-24 bg-gradient-to-br rounded-full from-orange-500 to-red-600 z-10 flex items-center justify-center shadow-2xl border-4 border-white">
               <img
                 src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Hitless_ID.png"
                 alt=""
-                className="w-25 h-25 object-contain"
+                className="w-25 h-25 object-contain rounded-full"
               />
             </div>
           </div>
         )}
         {!focusedRunner && (
+        <div className="absolute top-[2%] left-[18%] transform -translate-x-1/2 z-50">
+          <div className="w-[85%] h-[85%] z-10 flex items-center justify-center bg-white/10 shadow-2xl border-4 border-black">
+            <img
+              src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Logo_Resident_Evil_VII.webp"
+              alt=""
+              className="w-[85%] h-[85%] object-contain"
+            />
+          </div>
+        </div>
+        )}
+        {!focusedRunner && (
 
-          <div className="absolute top-80 right-2 transform z-30 w-[90%] max-w-[1000px]">
-            <div className="flex items-center justify-center shadow-2xl">
+          <div className="absolute bottom-28  -translate-y-[-29%] left-1/4 transform z-30 w-[100%] max-w-[1000px]">
+            <div className="flex items-center justify-center ">
               <div
                 className="font-norwester text-center tracking-wider break-words"
                 style={{
@@ -282,17 +281,17 @@ export default function TournamentOverlay() {
                 }}
               >
                 <span style={{ color: '#ff0000' }}>
-                    RE4 Classic Separate Ways
+                    Resident Evil 7 Madhouse Damageless Race 
                 </span>
                 <br />
-                <span>Any % Damageless Race (PC Steam)</span>
+                <span>Category : New Game Madhouse Any% (PC)</span>
               </div>
             </div>
           </div>
         )}
         {/* Center Content */}
-        {!true && (
-          <div className="absolute mt-36 left-1/2 transform -translate-x-[55%] z-30 w-[90%] max-w-[1600px] px-4 overflow-hidden pointer-events-none">
+        {!focusedRunner && (
+          <div className="absolute bottom-1 left-1/2 transform -translate-x-[55%] -translate-y-[-13%] z-30 w-[90%] max-w-[1600px] overflow-hidden pointer-events-none">
             <div className="flex items-center justify-center shadow-2xl">
               <img
                 src="https://github.com/Putra3340/MediaSource/blob/main/long%20text.png?raw=true"
@@ -317,18 +316,8 @@ export default function TournamentOverlay() {
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-20 bg-black/50 backdrop-blur-sm px-8 py-3 rounded-b-lg">
           <div className="flex space-x-8 text-white text-center">
             <div>
-              <p className="font-semibold text-lg">Commentator 1</p>
-              <p className="text-sm text-gray-300">b</p>
-            </div>
-            <div className="w-px bg-gray-500"></div>
-            <div>
-              <p className="font-semibold text-lg">Commentator 2</p>
-              <p className="text-sm text-gray-300">Dani</p>
-            </div>
-            <div className="w-px bg-gray-500"></div>
-            <div>
-              <p className="font-semibold text-lg">Commentator 3</p>
-              <p className="text-sm text-gray-300">Underated</p>
+              <p className="font-semibold text-lg">Commentator</p>
+              <p className="text-sm text-gray-300">Rikoo</p>
             </div>
           </div>
         </div>
@@ -353,8 +342,7 @@ export default function TournamentOverlay() {
               key={runner.id}
               className={`absolute transition-all duration-500 ease-in-out ${runnerStyles.className}`}
               style={{
-                zIndex: isFocused ? 15 : 10,
-                ...runnerStyles.style,
+                zIndex: isFocused ? 10 : 15
               }}
             >
               {/* Rest of the component remains the same */}
