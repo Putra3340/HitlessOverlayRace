@@ -15,8 +15,8 @@ interface Runner {
 
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
-    { id: 1, name: "Bg Dap", youtubeId: "t6nfJOuj8AE", hits: 0, position: "top-left" },
-    { id: 2, name: "Dani", youtubeId: "t6nfJOuj8AE", hits: 0, position: "bottom-right" },
+    { id: 1, name: "FirmanGS", youtubeId: "NJNS8L0sJd4", hits: 0, position: "top-left" },
+    { id: 2, name: "Nyr 9", youtubeId: "t6nfJOuj8AE", hits: 0, position: "bottom-right" },
   ])
 
   const [focusedRunner, setFocusedRunner] = useState<number | null>(null)
@@ -256,12 +256,12 @@ export default function TournamentOverlay() {
           </div>
         )}
         {!focusedRunner && (
-        <div className="absolute top-[2%] left-[18%] transform -translate-x-1/2 z-50">
-          <div className="w-[85%] h-[85%] z-10 flex items-center justify-center bg-white/10 shadow-2xl border-4 border-black">
+        <div className="absolute top-[2%] left-[21%] transform -translate-x-1/2 z-50">
+          <div className="w-[45%] h-[45%] z-10 flex items-center justify-center bg-white/10 shadow-2xl border-4 border-black">
             <img
-              src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/Logo_Resident_Evil_VII.webp"
+              src="https://raw.githubusercontent.com/Putra3340/MediaSource/refs/heads/main/re4c_sw.webp"
               alt=""
-              className="w-[85%] h-[85%] object-contain"
+              className="w-[45%] h-[85%] object-contain scale-[2.50] translate-y-[10%] translate-x-[-4%]"
             />
           </div>
         </div>
@@ -281,7 +281,7 @@ export default function TournamentOverlay() {
                 }}
               >
                 <span style={{ color: '#ff0000' }}>
-                    Resident Evil 7 Madhouse Any% 
+                RE4 Classic Separate Ways Any% 
                 </span>
                 <br />
                 <span>Damageless Race (PC STEAM)</span>
@@ -317,7 +317,7 @@ export default function TournamentOverlay() {
           <div className="flex space-x-8 text-white text-center">
             <div>
               <p className="font-semibold text-lg">Commentator</p>
-              <p className="text-sm text-gray-300">Rikoo</p>
+              <p className="text-sm text-gray-300">Bg Dap</p>
             </div>
           </div>
         </div>
