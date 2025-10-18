@@ -15,7 +15,7 @@ interface Runner {
 
 export default function TournamentOverlay() {
   const [runners, setRunners] = useState<Runner[]>([
-    { id: 1, name: "Bg Dap", youtubeId: "t6nfJOuj8AE", hits: 0, position: "top-left" },
+    { id: 1, name: "Bg Dap", youtubeId: "yHjsv9xcASc", hits: 0, position: "top-left" },
     { id: 2, name: "Dani", youtubeId: "t6nfJOuj8AE", hits: 0, position: "bottom-right" },
   ])
 
